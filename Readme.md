@@ -2,84 +2,78 @@
 
 ## Graph-Powered Career & Skill Path Explorer
 
-SkillPath is an interactive career exploration platform that uses a graph database to represent relationships between careers, skills, and prerequisites.
+SkillPath is a web application that helps users explore career paths through the relationships between **careers, skills, and skill prerequisites**.
 
-Instead of simply listing the skills required for a career, SkillPath shows **how those skills are connected** and helps users understand **what they should learn first**.
+Instead of showing a flat list of skills, SkillPath represents the relationships as a graph and helps users understand **what to learn first and how skills connect to a target career**.
 
----
+### Live Demo
 
-## ✨ Features
+**Hosted application:**  
+https://skill-path-5zt9ebfyv-harsha-vardhan-gudlas-projects.vercel.app/
 
-- 🎯 Explore multiple career paths
-- 🧠 View skills required for each career
-- 📊 Categorize skills by Beginner, Intermediate, and Advanced levels
-- 🕸️ Explore an interactive skill dependency graph
-- 🔎 Search for specific skills
-- 🖱️ Click a skill to inspect its details
-- 🧭 Identify prerequisite skills automatically
-- 🛣️ Generate a learning path toward a selected skill
-- 💡 Visually highlight prerequisite chains
-- 🔄 Switch between different careers
-- 🗄️ Store career, skill, and prerequisite relationships in a graph database
-- ⚡ Retrieve graph data through REST APIs
+### Screen Recording
+
+**Demo video:**  
+https://drive.google.com/file/d/11PXwbG2zm4UDUdoWJqDQX432I5PnOWQ1/view?usp=sharing
 
 ---
 
-## 🎯 Supported Career Paths
+## Features
 
-SkillPath currently supports:
-
-- AI Engineer
-- Data Scientist
-- Full-Stack Developer
-- ML Engineer
-- Machine Learning Engineer
+- Explore multiple career paths
+- View skills required for a career
+- Categorize skills as Beginner, Intermediate, or Advanced
+- Search for skills
+- View an interactive skill dependency graph
+- Click a skill to view its details
+- Identify prerequisite skills
+- Generate a learning path toward a selected skill
+- Highlight prerequisite chains in the graph
+- Switch between different careers
+- Store career/skill relationships in CognoDB
 
 ---
 
-## 🏗️ Architecture
+## Why a Graph Database?
+
+The core of SkillPath is based on relationships between entities.
+
+For example:
 
 ```text
-                    ┌────────────────────────┐
-                    │       React UI         │
-                    │                        │
-                    │   Career Explorer      │
-                    │   Skill Map            │
-                    │   Interactive Graph    │
-                    │   Skill Details        │
-                    └────────────┬───────────┘
-                                 │
-                                 │ REST API
-                                 ▼
-                    ┌────────────────────────┐
-                    │        FastAPI         │
-                    │                        │
-                    │   Career APIs          │
-                    │   Skill APIs           │
-                    │   Graph APIs           │
-                    └────────────┬───────────┘
-                                 │
-                                 │ Cypher Queries
-                                 ▼
-                    ┌────────────────────────┐
-                    │     Neo4j / CognoDB    │
-                    │                        │
-                    │   Careers              │
-                    │   Skills               │
-                    │   Prerequisites        │
-                    │   Relationships        │
-                    └────────────────────────┘
+Python → Pandas → Machine Learning → Deep Learning → Transformers
 ```
+
+A relational database could store careers and skills in separate tables, but answering questions involving **multiple prerequisite levels and connected skill paths** would require several joins and additional application logic.
+
+A graph database represents these relationships directly:
+
+```text
+(Career)-[:REQUIRES]->(Skill)
+(Skill)-[:REQUIRES]->(Skill)
+```
+
+This makes relationship-based queries such as:
+
+- What skills are required for this career?
+- What should I learn before this skill?
+- What is the learning path to a particular skill?
+- How are skills connected across multiple levels?
+
+natural graph traversal problems.
+
+This is the main reason CognoDB is used as the data layer.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 
 - React
 - Vite
 - React Flow
+- Dagre
 - CSS
 
 ### Backend
@@ -87,74 +81,182 @@ SkillPath currently supports:
 - Python
 - FastAPI
 - Uvicorn
+- Neo4j Python Driver
 
 ### Database
 
-- Neo4j / CognoDB
-- Cypher
+- CognoDB
+- openCypher
+- Bolt protocol
 
-### API Communication
+### Deployment
 
-- REST APIs
-- JSON
+- Vercel
 
 ---
 
-## 🧩 How SkillPath Works
-
-SkillPath models careers and skills as a connected graph.
-
-For example:
+## Architecture
 
 ```text
-Python
-   │
-   ├──────────────► NumPy
-   │                  │
-   │                  ▼
-   │            Machine Learning
-   │                  │
-   │                  ▼
-   │            Neural Networks
-   │                  │
-   │                  ▼
-   │             Deep Learning
-   │
-   └──────────────► Pandas
-```
-
-When a user selects a skill, SkillPath can determine:
-
-- What prerequisites are required
-- Which skills should be learned first
-- How the selected skill connects to other skills
-- The learning path toward the selected skill
-
----
-
-## 🔌 API Endpoints
-
-### Get Careers
-
-```http
-GET /api/careers
-```
-
-### Get Career Skills
-
-```http
-GET /api/careers/{career}/skills
-```
-
-### Get Career Graph
-
-```http
-GET /api/careers/{career}/graph
+┌──────────────────────────────┐
+│          React UI            │
+│                              │
+│  Career Explorer             │
+│  Skill Search                │
+│  Skill Details               │
+│  Interactive Skill Graph     │
+└──────────────┬───────────────┘
+               │
+               │ REST API
+               ▼
+┌──────────────────────────────┐
+│          FastAPI             │
+│                              │
+│  Career APIs                 │
+│  Skill APIs                  │
+│  Graph Queries               │
+└──────────────┬───────────────┘
+               │
+               │ Neo4j Driver
+               │ openCypher
+               ▼
+┌──────────────────────────────┐
+│          CognoDB             │
+│                              │
+│  Careers                     │
+│  Skills                      │
+│  Prerequisites               │
+│  Relationships               │
+└──────────────────────────────┘
 ```
 
 ---
 
-## 📂 Project Structure
+## Graph Data Model
+
+The main entities are **Career** and **Skill**.
+
+Skills are connected to careers and to other skills through prerequisite relationships.
+
+```text
+                 ┌──────────────┐
+                 │   Career     │
+                 │  AI Engineer │
+                 └──────┬───────┘
+                        │
+                    REQUIRES
+                        │
+                        ▼
+                 ┌──────────────┐
+                 │    Skill     │
+                 │     ML       │
+                 └──────┬───────┘
+                        │
+                    REQUIRES
+                        │
+                        ▼
+                 ┌──────────────┐
+                 │    Skill     │
+                 │   Python     │
+                 └──────────────┘
+```
+
+### Node properties
+
+**Career**
+
+- `name`
+- `description`
+
+**Skill**
+
+- `name`
+- `category`
+- `difficulty`
+
+### Relationships
+
+- `(:Career)-[:REQUIRES]->(:Skill)`
+- `(:Skill)-[:REQUIRES]->(:Skill)`
+
+The relationship structure is what allows SkillPath to calculate prerequisite chains and learning paths.
+
+---
+
+## Data & Seed
+
+The repository contains a seed script used to populate the graph database with realistic career and skill data.
+
+The seed data includes careers such as:
+
+- AI Engineer
+- Data Scientist
+- Full-Stack Developer
+- ML Engineer
+- Machine Learning Engineer
+
+The graph also contains skills such as:
+
+- Python
+- Git
+- Docker
+- Statistics
+- Linear Algebra
+- NumPy
+- Pandas
+- Machine Learning
+- PyTorch
+- Neural Networks
+- Deep Learning
+- Natural Language Processing
+- Transformers
+- REST APIs
+
+The seed script can be used to recreate the graph data in a CognoDB instance.
+
+---
+
+## Cypher Queries
+
+The backend uses parameterised Cypher queries through the official Neo4j Python driver.
+
+### 1. Find skills required by a career
+
+A career-to-skill traversal retrieves the skills associated with the selected career.
+
+```cypher
+MATCH (c:Career {name: $career_name})-[:REQUIRES]->(s:Skill)
+RETURN s
+ORDER BY s.name
+```
+
+The career name is passed as a query parameter rather than being concatenated into the Cypher string.
+
+### 2. Multi-hop prerequisite traversal
+
+SkillPath also traverses multiple prerequisite levels.
+
+```cypher
+MATCH path =
+  (target:Skill {name: $skill_name})
+  <-[:REQUIRES*1..]-
+  (prerequisite:Skill)
+RETURN path
+```
+
+This allows the application to identify prerequisite chains instead of only checking the immediate parent skill.
+
+### 3. Learning path
+
+The graph relationships are used to determine the order in which prerequisite skills should be learned before reaching a selected target skill.
+
+This is one of the areas where a graph traversal is more natural than repeatedly joining relational tables.
+
+> The exact Cypher implementations used by the application are contained in `backend/queries.py`.
+
+---
+
+## Project Structure
 
 ```text
 SkillPath/
@@ -163,46 +265,88 @@ SkillPath/
 │   ├── database.py
 │   ├── main.py
 │   ├── queries.py
-│   ├── requirements.txt
 │   ├── seed.py
-│   └── test_connection.py
+│   ├── test_connection.py
+│   └── requirements.txt
 │
 ├── frontend/
 │   ├── public/
 │   ├── src/
-│   │   ├── assets/
 │   │   ├── App.jsx
 │   │   ├── App.css
 │   │   ├── index.css
-│   │   └── main.jsx
+│   │   ├── main.jsx
+│   │   └── assets/
 │   ├── package.json
 │   └── vite.config.js
 │
 ├── .gitignore
+├── .env
+├── vercel.json
 └── README.md
 ```
 
 ---
 
-## 🚀 Running the Project Locally
+## Environment Variables
 
-### Backend
+Database credentials are kept outside the source code.
+
+Create a `.env` file with:
+
+```env
+COGNODB_URI=your_cognodb_bolt_uri
+COGNODB_USERNAME=cognodb
+COGNODB_PASSWORD=your_cognodb_password
+```
+
+Do **not** commit `.env` or database credentials to GitHub.
+
+The deployed application uses the same values as Vercel environment variables.
+
+---
+
+## Running Locally
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/harshavardhangudla/SkillPath.git
+cd SkillPath
+```
+
+### 2. Backend setup
 
 ```bash
 cd backend
 python -m venv venv
+```
+
+Windows:
+
+```bash
 venv\Scripts\activate
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
+```
+
+Start FastAPI:
+
+```bash
 uvicorn main:app --reload
 ```
 
-Backend:
+The backend runs locally on:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-### Frontend
+### 3. Frontend setup
 
 Open another terminal:
 
@@ -212,118 +356,100 @@ npm install
 npm run dev
 ```
 
-Frontend:
-
-```text
-http://localhost:5173
-```
+Open the Vite development URL shown in the terminal.
 
 ---
 
-## 🔐 Environment Variables
+## CognoDB Setup
 
-Database credentials and other secrets should be stored in environment variables.
+1. Create a CognoDB Cloud account.
+2. Create a free CognoDB instance.
+3. Copy the generated Bolt URI and password.
+4. Add them to the environment variables.
+5. Run the seed script to populate the graph.
 
 Example:
 
-```env
-NEO4J_URI=your_neo4j_uri
-NEO4J_USERNAME=your_username
-NEO4J_PASSWORD=your_neo4j_password
+```bash
+cd backend
+python seed.py
 ```
 
-**Never commit real database credentials, passwords, or API keys to Git.**
+The application then connects to CognoDB through the official Neo4j Python driver.
 
 ---
 
-## 🖥️ Application
+## Error Handling
+
+If the graph database is unavailable, the application displays a connection error rather than failing silently.
+
+The UI provides a clear message indicating that the backend/database connection needs to be available.
+
+---
+
+## Screenshots
 
 ### Career Explorer
 
-Switch between different career paths and view the required skills.
+![SkillPath Career Explorer](docs/screenshots/career-explorer.png)
 
 ### Interactive Skill Graph
 
-Visualize relationships between skills and their prerequisites.
+![SkillPath Graph](docs/screenshots/skill-graph.png)
 
-### Skill Details
+### Skill Details & Learning Path
 
-Click a skill to view:
-
-- Category
-- Difficulty
-- Prerequisites
-- Learning path
-
-### Learning Path
-
-Prerequisite relationships are highlighted to show what should be learned first.
+![Skill Details](docs/screenshots/skill-details.png)
 
 ---
 
-## 🔄 Application Flow
+## Demo
 
-```text
-User selects career
-        │
-        ▼
-React requests career data
-        │
-        ▼
-FastAPI REST API
-        │
-        ▼
-Neo4j / CognoDB
-        │
-        ▼
-Career + Skills + Relationships
-        │
-        ▼
-React Flow renders graph
-        │
-        ▼
-User selects a skill
-        │
-        ▼
-Prerequisites and learning path highlighted
-```
+The hosted application demonstrates the complete flow:
+
+1. Select a career.
+2. View the required skills.
+3. Search for a skill.
+4. Explore the skill dependency graph.
+5. Select a skill.
+6. View its prerequisites.
+7. View the resulting learning path.
+
+**Live Demo:**  
+https://skill-path-5zt9ebfyv-harsha-vardhan-gudlas-projects.vercel.app/
+
+**Screen Recording:**  
+https://drive.google.com/file/d/11PXwbG2zm4UDUdoWJqDQX432I5PnOWQ1/view?usp=sharing
 
 ---
 
-## 🎯 Project Goal
+## Assignment Requirements Checklist
 
-The goal of SkillPath is to make career planning more **structured, visual, and actionable**.
-
-Traditional career guides often provide a static list of technologies or skills.
-
-SkillPath focuses on the relationships between those skills, helping users answer:
-
-> **"What should I learn first, and what should I learn next?"**
-
----
-
-## 🔮 Future Improvements
-
-- 🤖 AI-powered personalized career recommendations
-- 📈 Skill progress tracking
-- 👤 User profiles and personalized learning paths
-- 📚 Learning resource recommendations
-- 🎓 Course and certification recommendations
-- 🧠 AI-generated learning roadmaps
-- 📊 Progress visualization
-- ☁️ Cloud deployment
-- 🔐 User authentication
-
----
-
-## 👨‍💻 Author
-
-**Harsha Vardhan Gudla**
-
-GitHub: https://github.com/harshavardhangudla/SkillPath
+| Requirement | Status |
+|---|---|
+| CognoDB graph database | ✅ |
+| Thoughtful graph data model | ✅ |
+| Typed relationships and properties | ✅ |
+| Seed data and seed script | ✅ |
+| Cypher queries | ✅ |
+| Multi-hop graph traversal | ✅ |
+| Parameterised queries | ✅ |
+| Functional web application | ✅ |
+| Interactive UI | ✅ |
+| Graceful database connection error | ✅ |
+| Environment variables for credentials | ✅ |
+| GitHub repository | ✅ |
+| Hosted application demo | ✅ |
+| Screen recording | ✅ |
+| README with setup instructions | ✅ |
+| README with data model diagram | ✅ |
+| README with query explanation | ✅ |
+| README with UI screenshots | ✅ |
 
 ---
 
-## 📄 License
+## Links
 
-This project is currently intended for educational and demonstration purposes.
+- **GitHub:** https://github.com/harshavardhangudla/SkillPath
+- **Live Demo:** https://skill-path-5zt9ebfyv-harsha-vardhan-gudlas-projects.vercel.app/
+- **Demo Video:** https://drive.google.com/file/d/11PXwbG2zm4UDUdoWJqDQX432I5PnOWQ1/view?usp=sharing
