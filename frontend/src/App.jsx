@@ -157,7 +157,7 @@ function App() {
   // ======================================================
 
   useEffect(() => {
-    fetch(`${API_URL}/api/careers`)
+    fetch(`${API_URL}/careers`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to load careers");
@@ -194,7 +194,7 @@ function App() {
     setSkillSearch("");
 
     fetch(
-      `${API_URL}/api/careers/${encodeURIComponent(
+      `${API_URL}/careers/${encodeURIComponent(
         selectedCareer.name
       )}/skills`
     )
@@ -227,7 +227,7 @@ function App() {
     setLoadingGraph(true);
 
     fetch(
-      `${API_URL}/api/careers/${encodeURIComponent(
+      `${API_URL}/careers/${encodeURIComponent(
         selectedCareer.name
       )}/graph`
     )
