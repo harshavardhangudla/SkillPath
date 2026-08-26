@@ -10,7 +10,7 @@ import dagre from "@dagrejs/dagre";
 import "@xyflow/react/dist/style.css";
 import "./index.css";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "/api";
 
 const NODE_WIDTH = 140;
 const NODE_HEIGHT = 45;
