@@ -1,127 +1,329 @@
-Persona-Driven Document Intelligence
-A robust, generic, and efficient pipeline for extracting and ranking the most relevant sections from multiple PDFs—tailored to a given persona’s needs and job-to-be-done, as required for the Adobe India Hackathon.
+# SkillPath 🚀
 
-Overview
-This system ingests a collection of 3-10 PDFs, a persona description, and a specific job-to-be-done. It analyzes and ranks document sections according to their relevance to the persona’s requirements, outputting detailed structured results for downstream consumption.
+## Graph-Powered Career & Skill Path Explorer
 
-Inputs: 3-10 PDFs, persona, job-to-be-done/task.
+SkillPath is an interactive career exploration platform that uses a graph database to represent relationships between careers, skills, and prerequisites.
 
-Outputs: JSON with top sections, refined text, and analysis conforming to the challenge specification.
+Instead of simply listing the skills required for a career, SkillPath shows **how those skills are connected** and helps users understand **what they should learn first**.
 
-Features
-Highly Generic: Adapts to a wide variety of documents (academic, financial, educational, business, etc.) and user personas (students, researchers, analysts, entrepreneurs, etc.).
+---
 
-Persona-Driven: Adjusts ranking and analysis according to supplied persona and job context.
+## ✨ Features
 
-Efficient: Runs on CPU only, with model size <1GB and execution <60 seconds for 3-5 docs.
+- 🎯 Explore multiple career paths
+- 🧠 View skills required for each career
+- 📊 Categorize skills by Beginner, Intermediate, and Advanced levels
+- 🕸️ Explore an interactive skill dependency graph
+- 🔎 Search for specific skills
+- 🖱️ Click a skill to inspect its details
+- 🧭 Identify prerequisite skills automatically
+- 🛣️ Generate a learning path toward a selected skill
+- 💡 Visually highlight prerequisite chains
+- 🔄 Switch between different careers
+- 🗄️ Store career, skill, and prerequisite relationships in a graph database
+- ⚡ Retrieve graph data through REST APIs
 
-Self-contained: No internet is required at runtime.
+---
 
-Project Structure
-text
-persona-document-intelligence/
-├── src/
-│   ├── pdf_processor.py     # PDF text extraction
-│   ├── nlp_engine.py        # Text/embedding engine
-│   ├── persona_matcher.py   # Persona-specific ranking
-│   ├── output_formatter.py  # Output JSON logic
-│   └── main.py              # Orchestrator
-├── models/                  # Downloaded models
-├── input/                   # Place PDFs here
-├── output/                  # JSON outputs
-├── tests/                   # Unit/integration tests
-├── requirements.txt
-├── Dockerfile
-├── approach_explanation.md
-├── README.md                # [this file]
-└── run.py                   # Entry-point script
-Installation
-Requirements:
+## 🎯 Supported Career Paths
 
-Python 3.8+
+SkillPath currently supports:
 
-Docker (optional/recommended for deployment)
+- AI Engineer
+- Data Scientist
+- Full-Stack Developer
+- ML Engineer
+- Machine Learning Engineer
 
-Clone and Install Dependencies:
+---
 
-bash
-git clone <repo-url>
-cd persona-document-intelligence
+## 🏗️ Architecture
+
+```text
+                    ┌────────────────────────┐
+                    │       React UI         │
+                    │                        │
+                    │   Career Explorer      │
+                    │   Skill Map            │
+                    │   Interactive Graph    │
+                    │   Skill Details        │
+                    └────────────┬───────────┘
+                                 │
+                                 │ REST API
+                                 ▼
+                    ┌────────────────────────┐
+                    │        FastAPI         │
+                    │                        │
+                    │   Career APIs          │
+                    │   Skill APIs           │
+                    │   Graph APIs           │
+                    └────────────┬───────────┘
+                                 │
+                                 │ Cypher Queries
+                                 ▼
+                    ┌────────────────────────┐
+                    │     Neo4j / CognoDB    │
+                    │                        │
+                    │   Careers              │
+                    │   Skills               │
+                    │   Prerequisites        │
+                    │   Relationships        │
+                    └────────────────────────┘
+```
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- React
+- Vite
+- React Flow
+- CSS
+
+### Backend
+
+- Python
+- FastAPI
+- Uvicorn
+
+### Database
+
+- Neo4j / CognoDB
+- Cypher
+
+### API Communication
+
+- REST APIs
+- JSON
+
+---
+
+## 🧩 How SkillPath Works
+
+SkillPath models careers and skills as a connected graph.
+
+For example:
+
+```text
+Python
+   │
+   ├──────────────► NumPy
+   │                  │
+   │                  ▼
+   │            Machine Learning
+   │                  │
+   │                  ▼
+   │            Neural Networks
+   │                  │
+   │                  ▼
+   │             Deep Learning
+   │
+   └──────────────► Pandas
+```
+
+When a user selects a skill, SkillPath can determine:
+
+- What prerequisites are required
+- Which skills should be learned first
+- How the selected skill connects to other skills
+- The learning path toward the selected skill
+
+---
+
+## 🔌 API Endpoints
+
+### Get Careers
+
+```http
+GET /api/careers
+```
+
+### Get Career Skills
+
+```http
+GET /api/careers/{career}/skills
+```
+
+### Get Career Graph
+
+```http
+GET /api/careers/{career}/graph
+```
+
+---
+
+## 📂 Project Structure
+
+```text
+SkillPath/
+│
+├── backend/
+│   ├── database.py
+│   ├── main.py
+│   ├── queries.py
+│   ├── requirements.txt
+│   ├── seed.py
+│   └── test_connection.py
+│
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── App.jsx
+│   │   ├── App.css
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── package.json
+│   └── vite.config.js
+│
+├── .gitignore
+└── README.md
+```
+
+---
+
+## 🚀 Running the Project Locally
+
+### Backend
+
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate
 pip install -r requirements.txt
-python -m spacy download en_core_web_sm
-Pretrained Models
-No downloads at runtime required. Models are preloaded during Docker build/local setup:
+uvicorn main:app --reload
+```
 
-en_core_web_sm (spaCy for NER, preprocessing)
+Backend:
 
-all-MiniLM-L6-v2 (Sentence Transformers - efficient semantic similarity)
+```text
+http://127.0.0.1:8000
+```
 
-Usage
-1. Prepare The Inputs
-Place your PDF files in the /input folder (or specify paths).
+### Frontend
 
-Define the persona and job-to-be-done in run.py or via the interface.
+Open another terminal:
 
-2. Run Locally
-bash
-python run.py
-3. Run with Docker
-bash
-docker build -t persona-doc-intelligence .
-docker run -v $(pwd)/input:/app/input \
-           -v $(pwd)/output:/app/output \
-           persona-doc-intelligence
-4. Configuration
-Edit run.py to specify:
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-List of PDF paths
+Frontend:
 
-Persona description
+```text
+http://localhost:5173
+```
 
-Job-to-be-done sentence
+---
 
-Output file path
+## 🔐 Environment Variables
 
-Output
-A single JSON file per run, matching the challenge schema:
+Database credentials and other secrets should be stored in environment variables.
 
-metadata: Documents, persona, job, timestamp.
+Example:
 
-extracted_sections: Ranked section list (document, page, section title, rank).
+```env
+NEO4J_URI=your_neo4j_uri
+NEO4J_USERNAME=your_username
+NEO4J_PASSWORD=your_neo4j_password
+```
 
-sub_section_analysis: Top 10 detailed analyzed/extractive summaries.
+**Never commit real database credentials, passwords, or API keys to Git.**
 
-See included sample and refer to approach_explanation.md for schema.
+---
 
-Testing
-Run all tests with:
+## 🖥️ Application
 
-bash
-python -m unittest discover tests/
-This invokes integration/unit tests to ensure consistent outputs and formats.
+### Career Explorer
 
-Performance
-Model size: ≤200MB
+Switch between different career paths and view the required skills.
 
-Processing time: <60 seconds for 3-5 typical documents (CPU)
+### Interactive Skill Graph
 
-Robust error handling: Graceful fallback to TF-IDF if deep embeddings fail.
+Visualize relationships between skills and their prerequisites.
 
-Container-optimized: Fast cold start via Docker.
+### Skill Details
 
-Troubleshooting
-PDF not parsing correctly? Try both pdfplumber and PyPDF2 backends.
+Click a skill to view:
 
-Timeouts? Check logs for bottlenecks; reduce document count or page length.
+- Category
+- Difficulty
+- Prerequisites
+- Learning path
 
-Output validation failed? Ensure inputs and requirements are followed and test input files are valid PDFs.
+### Learning Path
 
-Approach
-Please see approach_explanation.md for a full technical methodology and decision rationale.
+Prerequisite relationships are highlighted to show what should be learned first.
 
-Authors & Attribution
-Built for Adobe India Hackathon 2025
+---
 
-Contact:
+## 🔄 Application Flow
 
-Team HAS
+```text
+User selects career
+        │
+        ▼
+React requests career data
+        │
+        ▼
+FastAPI REST API
+        │
+        ▼
+Neo4j / CognoDB
+        │
+        ▼
+Career + Skills + Relationships
+        │
+        ▼
+React Flow renders graph
+        │
+        ▼
+User selects a skill
+        │
+        ▼
+Prerequisites and learning path highlighted
+```
+
+---
+
+## 🎯 Project Goal
+
+The goal of SkillPath is to make career planning more **structured, visual, and actionable**.
+
+Traditional career guides often provide a static list of technologies or skills.
+
+SkillPath focuses on the relationships between those skills, helping users answer:
+
+> **"What should I learn first, and what should I learn next?"**
+
+---
+
+## 🔮 Future Improvements
+
+- 🤖 AI-powered personalized career recommendations
+- 📈 Skill progress tracking
+- 👤 User profiles and personalized learning paths
+- 📚 Learning resource recommendations
+- 🎓 Course and certification recommendations
+- 🧠 AI-generated learning roadmaps
+- 📊 Progress visualization
+- ☁️ Cloud deployment
+- 🔐 User authentication
+
+---
+
+## 👨‍💻 Author
+
+**Harsha Vardhan Gudla**
+
+GitHub: https://github.com/harshavardhangudla/SkillPath
+
+---
+
+## 📄 License
+
+This project is currently intended for educational and demonstration purposes.
