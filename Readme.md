@@ -9,7 +9,7 @@ Instead of showing a flat list of skills, SkillPath represents the relationships
 ### Live Demo
 
 **Hosted application:**  
-https://skill-path-5zt9ebfyv-harsha-vardhan-gudlas-projects.vercel.app/
+https://skill-path-bay.vercel.app/
 
 ### Screen Recording
 
