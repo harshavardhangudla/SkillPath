@@ -416,7 +416,7 @@ The hosted application demonstrates the complete flow:
 7. View the resulting learning path.
 
 **Live Demo:**  
-https://skill-path-5zt9ebfyv-harsha-vardhan-gudlas-projects.vercel.app/
+https://skill-path-bay.vercel.app/
 
 **Screen Recording:**  
 https://drive.google.com/file/d/11PXwbG2zm4UDUdoWJqDQX432I5PnOWQ1/view?usp=sharing
@@ -451,5 +451,5 @@ https://drive.google.com/file/d/11PXwbG2zm4UDUdoWJqDQX432I5PnOWQ1/view?usp=shari
 ## Links
 
 - **GitHub:** https://github.com/harshavardhangudla/SkillPath
-- **Live Demo:** https://skill-path-5zt9ebfyv-harsha-vardhan-gudlas-projects.vercel.app/
+- **Live Demo:** https://skill-path-bay.vercel.app/
 - **Demo Video:** https://drive.google.com/file/d/11PXwbG2zm4UDUdoWJqDQX432I5PnOWQ1/view?usp=sharing
